@@ -38,7 +38,7 @@ def detail_product(request, product_id):
     context = {
         "product": get_object_or_404(Product, id=product_id)
     }
-    return render(request, "detatil.html", context)
+    return render(request, "detail.html", context)
 
 
 # 글 수정
