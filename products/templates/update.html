@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container" style="width: 800px">
+        <main>
+            <div class="row g-5">
+                <div>
+                    <h4 class="mb-3">물건 등록</h4>
+                    <form class="needs-validation" action="{% url 'products:update' product.id%}" method="POST"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="product_title" class="form-label">제목</label>
+                                <input type="text" class="form-control" id="product_title" name="product_title" placeholder="제목"
+                                       value="{{ product.product_title }}">
+                                <span style="color: red">{{ form.product_title.errors }}</span>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label for="product_price" class="form-label">가격</label>
+                                <input type="number" class="form-control" id="product_price" name="product_price" placeholder="가격"
+                                       value="{{ product.product_price }}">
+                                <span style="color: red">{{ form.product_price.errors }}</span>
+                            </div>
+
+                            <div class="col-sm-12 mb-10">
+                                <label for="product_content" class="form-label">내용</label>
+                                <textarea class="form-control" id="product_content" name="product_content" rows="10">{{ product.product_content }}</textarea>
+                                <span style="color: red">{{ form.product_content.errors }}</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">이미지</label>
+                                <input class="form-control" type="file" id="formFile" name="product_image"
+                                       value="{{ product.product_image }}">
+                                <span style="color: red">{{ form.product_image.errors }}</span>
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit">수정</button>
+                            <button class="btn btn-secondary" type="button"
+                                    onclick="location.href='{% url 'products:list' %}'">취소</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
