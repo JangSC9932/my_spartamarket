@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container" style="width: 1000px">
+        <main>
+            <div class="row g-5">
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">Follow</span>
+                        <span class="badge bg-primary rounded-pill">{{ followers.count }}</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        {% for follower in followers %}
+                        	<li class="list-group-item d-flex justify-content-end lh-sm">
+                                <div>
+                                    <h6 class="my-0">
+                                        <img src="{{ follower.following.profile_pic.url }}" alt="mdo" width="30" height="30"
+                                         class="rounded-circle">
+                                        <a href="{% url 'accounts:profile' follower.following.username %}">
+                                            {{ follower.following.username }}
+                                        </a>
+                                    </h6>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">Follower</span>
+                        <span class="badge bg-primary rounded-pill">{{ followings.count }}</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        {% for following in followings %}
+                        	<li class="list-group-item d-flex justify-content-end lh-sm">
+                                <div>
+                                    <h6 class="my-0">
+                                        <img src="{{ following.follower.profile_pic.url }}" alt="mdo" width="30" height="30"
+                                         class="rounded-circle">
+                                        <a href="{% url 'accounts:profile' following.follower.username %}">
+                                            {{ following.follower.username }}
+                                        </a>
+                                    </h6>
+                                </div>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+                <div class="col-md-7 col-lg-8">
+                    <h4 class="mb-3">프로필</h4>
+                    <div class="row g-3">
+
+                        <div class="mb-3">
+                            <img src="{{ user.profile_pic.url }}" alt="{{ user.profile_pic.name }}"
+                                 width="100%" height="400">
+                        </div>
+
+                        <div class="col-sm-12 mb-10">
+                            <label for="username" class="form-label fw-bold">Username</label>
+                            <br/>
+                            <span id="username">{{ user.username }}</span>
+                        </div>
+
+                        <div class="col-sm-6 d-flex justify-content-between">
+                            <label for="first_name" class="form-label fw-bold">First Name</label>
+                            <span id="first_name">{{ user.first_name }}</span>
+                        </div>
+
+                        <div class="col-sm-6 d-flex justify-content-between">
+                            <label for="last_name" class="form-label fw-bold">Last Name</label>
+                            <span id="last_name">{{ user.last_name }}</span>
+                        </div>
+
+                        <div class="col-sm-12 mb-10 d-flex justify-content-between">
+                            <label for="date_joined" class="form-label fw-bold">Joined Date</label>
+                            <span id="date_joined">{{ user.date_joined|date:'Y-m-d H:i' }}</span>
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-end">
+                        {% if user == request.user %}
+                            <button class="btn btn-primary" type="button"
+                                onclick="location.href='{% url 'accounts:profile_edit' %}'">정보수정
+                            </button>
+                            <button class="btn btn-dark" type="button"
+                                    onclick="location.href='{% url 'accounts:change_password' %}'">비밀번호 변경
+                            </button>
+                            <button class="btn btn-danger" type="button"
+                                    onclick="location.href='{% url 'accounts:profile_delete' %}'">회원탈퇴
+                            </button>
+                        {% else %}
+
+                            {% if is_following %}
+                            	<form action="{% url 'accounts:profile_unfollow' user.username %}" method="POST">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="submit">언팔로우</button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'accounts:profile_follow' user.username %}" method="POST">
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary" type="submit">팔로우</button>
+                                </form>
+                            {% endif %}
+
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

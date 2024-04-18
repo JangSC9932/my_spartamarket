@@ -14,19 +14,30 @@
                         </div>
 
                         <div class="col-sm-6 d-flex justify-content-between">
-                            <label for="product_title" class="form-label">제목</label>
+                            <label for="product_title" class="form-label fw-bold">제목</label>
                             <span id="product_title">{{ product.product_title }}</span>
                         </div>
 
                         <div class="col-sm-6 d-flex justify-content-between">
-                            <label for="product_price" class="form-label">가격</label>
+                            <label for="product_price" class="form-label fw-bold">작성자</label>
+                            <span id="product_price">
+                                <img src="{{ product.author.profile_pic.url }}" alt="mdo" width="30" height="30"
+                                         class="rounded-circle">
+                                <a href="{% url 'accounts:profile' product.author %}">{{ product.author }}</a>
+                            </span>
+                        </div>
+
+                        <hr class="my-1">
+
+                        <div class="col-sm-12 mb-10">
+                            <label for="product_price" class="form-label fw-bold">가격</label>
                             <span id="product_price">{{ product.product_price }} 원</span>
                         </div>
 
                         <hr class="my-1">
 
                         <div class="col-sm-12 mb-10">
-                            <label for="product_content" class="form-label">내용</label>
+                            <label for="product_content" class="form-label fw-bold">내용</label>
                             <br/>
                             <span id="product_content">{{ product.product_content }}</span>
                         </div>
@@ -36,12 +47,14 @@
                     <hr class="my-4">
 
                     <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary" type="button"
-                                onclick="location.href='{% url 'products:update' product.id %}'">수정
-                        </button>
-                        <button class="btn btn-danger" type="button"
-                                onclick="location.href='{% url 'products:delete' product.id %}'">삭제
-                        </button>
+                        {% if product.author == request.user %}
+                            <button class="btn btn-primary" type="button"
+                                    onclick="location.href='{% url 'products:update' product.id %}'">수정
+                            </button>
+                            <button class="btn btn-danger" type="button"
+                                    onclick="location.href='{% url 'products:delete' product.id %}'">삭제
+                            </button>
+                        {% endif %}
                         <button class="btn btn-secondary" type="button"
                                 onclick="location.href='{% url 'products:list' %}'">목록
                         </button>

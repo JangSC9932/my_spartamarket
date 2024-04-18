@@ -9,14 +9,19 @@
                         <a class="navbar-brand col-lg-3 me-0" href="#">제품 목록</a>
                         <ul class="navbar-nav col-lg-6 justify-content-lg-center">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">최신순</a>
+                                <a class="nav-link active fw-bold" aria-current="page" href="#">최신순</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">좋아요 순</a>
+                                <a class="nav-link" href="#">좋아요순</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">조회순</a>
                             </li>
                         </ul>
                         <div class="d-lg-flex col-lg-3 justify-content-lg-end">
-                            <button class="btn btn-primary" onclick="location.href='{% url 'products:create' %}'">작성하기</button>
+                            {% if request.user.is_authenticated %}
+                            	<button class="btn btn-primary" onclick="location.href='{% url 'products:create' %}'">작성하기</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -35,18 +40,21 @@
                                         <small class="text-body-dark">{{ product.product_price }} 원</small>
                                     </div>
                                     <div>
-                                        <small class="text-body-secondary">{{ product.created_at|date:"Y-m-d" }}</small>
+                                        <small class="text-body-secondary">{{ product.created_at|date:"Y-m-d H:i" }}</small>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-outline-primary"
-                                        onclick="location.href='{% url 'products:detail' product.id %}'">보기</button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary"
-                                        onclick="location.href='{% url 'products:update' product.id %}'">수정</button>
+                                            onclick="location.href='{% url 'products:detail' product.id %}'">보기</button>
+                                        {% if product.author == request.user %}
+                                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="location.href='{% url 'products:update' product.id %}'">수정</button>
+                                        {% endif %}
                                     </div>
                                     <div>
-                                        <small class="text-body-secondary">조회수 {{ product.views }}</small>
+                                        <small class="text-body-secondary">작성자 : {{ product.author }}</small>
+                                        <small class="text-body-secondary">조회수 : {{ product.views }}</small>
                                     </div>
                                 </div>
                             </div>

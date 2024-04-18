@@ -17,13 +17,13 @@
                             </div>
 
                             <div class="col-sm-12 mb-10">
-                                <label for="username" class="form-label">Username</label>
+                                <label for="username" class="form-label fw-bold">Username</label>
                                 <br/>
                                 <span id="username">{{ request.user }}</span>
                             </div>
 
                             <div class="col-sm-12 d-flex justify-content-between">
-                                <label for="first_name" class="form-label">First Name</label>
+                                <label for="first_name" class="form-label fw-bold">First Name</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
                                        placeholder="First Name"
                                        value="{{ request.user.first_name }}">
@@ -31,7 +31,7 @@
                             </div>
 
                             <div class="col-sm-12 d-flex justify-content-between">
-                                <label for="last_name" class="form-label">Last Name</label>
+                                <label for="last_name" class="form-label fw-bold">Last Name</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
                                        placeholder="Last Name"
                                        value="{{ request.user.last_name }}">
@@ -45,7 +45,7 @@
                         <div class="d-flex justify-content-end">
                             <button class="btn btn-primary" type="submit">정보수정</button>
                             <button class="btn btn-secondary" type="button"
-                                    onclick="location.href='{% url 'accounts:profile' %}'">취소</button>
+                                    onclick="location.href='{% url 'accounts:profile' request.user %}'">취소</button>
                         </div>
                     </form>
                 </div>

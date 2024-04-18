@@ -38,7 +38,7 @@
                                     <img src="{{ request.user.profile_pic.url }}" alt="mdo" width="20" height="20"
                                          class="rounded-circle"> 마이페이지</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'accounts:profile' request.user %}">프로필</a></li>
                                     <li><a class="dropdown-item" href="#">찜 목록</a></li>
                                 </ul>
                             </li>

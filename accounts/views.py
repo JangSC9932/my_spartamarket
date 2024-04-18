@@ -1,10 +1,10 @@
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, update_session_auth_hash
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import User
+from .models import User, Follow
 
 
 # 로그인
@@ -55,8 +55,15 @@ def signup(request):
 # 프로필
 @require_GET
 @login_required
-def profile(request):
-    return render(request, "detail.html")
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    context = {
+        "user": user,
+        "is_following": Follow.objects.filter(follower=request.user, following=user).exists(),
+        'followings': Follow.objects.filter(following=user),
+        'followers': Follow.objects.filter(follower=user),
+    }
+    return render(request, "accounts/detail.html", context)
 
 
 # 프로필 수정
@@ -69,13 +76,13 @@ def profile_edit(request):
             form.save()
             context = {
                 "message": "정상적으로 수정하였습니다.",
-                "return_url": reverse("accounts:profile")
+                "return_url": reverse("accounts:profile", request.user)
             }
             return render(request, "message.html", context)
         else:
-            return render(request, 'update.html', {"form": form})
+            return render(request, 'accounts/update.html', {"form": form})
     else:
-        return render(request, "update.html")
+        return render(request, "accounts/update.html")
 
 
 @require_http_methods(['GET', 'POST'])
@@ -91,9 +98,9 @@ def change_password(request):
             }
             return render(request, "message.html", context)
         else:
-            return render(request, 'change_password.html', {"form": form})
+            return render(request, 'accounts/change_password.html', {"form": form})
     else:
-        return render(request, 'change_password.html')
+        return render(request, 'accounts/change_password.html')
 
 
 @login_required
@@ -107,4 +114,24 @@ def profile_delete(request):
     return render(request, "message.html", context)
 
 
+@login_required
+def profile_follow(request, username):
+    if request.method == "POST":
+        user = User.objects.get(username=username)
 
+        if not Follow.objects.filter(follower=request.user, following=user).exists():
+            follow = Follow()
+            follow.follower = request.user
+            follow.following = user
+            follow.save()
+        return redirect("accounts:profile", username=username)
+
+
+@login_required
+def profile_unfollow(request, username):
+    if request.method == "POST":
+        user = User.objects.get(username=username)
+        follow = Follow.objects.filter(follower=request.user, following=user)
+        if follow.exists():
+            follow.delete()
+        return redirect("accounts:profile", username=username)
