@@ -54,6 +54,20 @@
                             <button class="btn btn-danger" type="button"
                                     onclick="location.href='{% url 'products:delete' product.id %}'">삭제
                             </button>
+                        {% else %}
+
+                            {% if is_wishing %}
+                            	<form action="{% url 'products:wishlist_remove' product.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button class="btn btn-secondary" type="submit">찜취소</button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'products:wishlist_add' product.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="submit">찜하기</button>
+                                </form>
+                            {% endif %}
+
                         {% endif %}
                         <button class="btn btn-secondary" type="button"
                                 onclick="location.href='{% url 'products:list' %}'">목록

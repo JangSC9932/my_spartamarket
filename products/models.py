@@ -12,3 +12,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+class WishList(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlist')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wishlist')
+    created_at = models.DateTimeField(auto_now_add=True)

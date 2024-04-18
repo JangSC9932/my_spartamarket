@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary rounded" aria-label="Thirteenth navbar example">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse d-lg-flex">
+                        <a class="navbar-brand col-lg-3 me-0" href="#">찜 목록</a>
+                        <ul class="navbar-nav col-lg-6 justify-content-lg-center">
+                            <li class="nav-item">
+                                <a class="nav-link active fw-bold" aria-current="page" href="#">최신순</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+                {% for foo in wishlist %}
+                	 <div class="col">
+                        <div class="card shadow-sm">
+                            <img src="{{ foo.product.product_image.url }}" alt="{{ foo.product.product_image.name }}"
+                                 class="bd-placeholder-img card-img-top" width="100%" height="225">
+                            <div class="card-body">
+                                <p class="card-text">{{ foo.product.product_title }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <small class="text-body-dark">{{ foo.product.product_price }} 원</small>
+                                    </div>
+                                    <div>
+                                        <small class="text-body-secondary">{{ foo.product.created_at|date:"Y-m-d H:i" }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="location.href='{% url 'products:detail' foo.product.id %}'">보기</button>
+                                    </div>
+                                    <div>
+                                        <small class="text-body-secondary">작성자 : {{ foo.product.author }}</small>
+                                        <small class="text-body-secondary">조회수 : {{ foo.product.views }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

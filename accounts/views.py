@@ -76,7 +76,7 @@ def profile_edit(request):
             form.save()
             context = {
                 "message": "정상적으로 수정하였습니다.",
-                "return_url": reverse("accounts:profile", request.user)
+                "return_url": reverse("accounts:profile", kwargs={'username': request.user.username})
             }
             return render(request, "message.html", context)
         else:

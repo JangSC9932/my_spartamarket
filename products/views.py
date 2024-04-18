@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProductForm
 from django.urls import reverse
 
-from .models import Product
+from .models import Product, WishList
 
 
 # 글 목록
@@ -43,7 +43,8 @@ def detail_product(request, product_id):
     product.views += 1
     product.save()
     context = {
-        "product": get_object_or_404(Product, id=product_id)
+        "product": get_object_or_404(Product, id=product_id),
+        "is_wishing": WishList.objects.filter(product=product, author=request.user).exists()
     }
     return render(request, "products/detail.html", context)
 
@@ -94,3 +95,42 @@ def delete_product(request, product_id):
     }
 
     return render(request, "message.html", context)
+
+
+# 글 찜하기
+@login_required
+@require_http_methods(["POST"])
+def product_wishlist_add(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == "POST":
+        if product.author != request.user:
+            if not WishList.objects.filter(product=product, author=request.user).exists():
+                wishlist = WishList()
+                wishlist.product = product
+                wishlist.author = request.user
+                wishlist.save()
+                return redirect("products:detail", product_id)
+    return redirect("products:detail", product_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def product_wishlist_remove(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == "POST":
+        if product.author != request.user:
+            wishlist = WishList.objects.filter(product=product, author=request.user)
+            if wishlist.exists():
+                wishlist.delete()
+                return redirect("products:detail", product_id)
+    return redirect("products:detail", product_id)
+
+
+@login_required
+@require_http_methods(["GET"])
+def product_wishlist(request):
+    wishlist = WishList.objects.filter(author=request.user).all()
+    context = {
+        "wishlist": wishlist
+    }
+    return render(request, "products/my_list.html", context)
