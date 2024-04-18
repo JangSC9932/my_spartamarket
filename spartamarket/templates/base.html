@@ -7,6 +7,7 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
@@ -20,24 +21,37 @@
                 <div class="collapse navbar-collapse" id="navbarsExample06">
                     <ul class="navbar-nav me-auto mb-2 mb-xl-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'products:list' %}">제품보러가기</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalLogin" href="#">로그인</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalSingUp" href="#">회원가입</a>
+                            {% url 'products:list' as products_list_url %}
+                            <a class="nav-link{% if request.path == products_list_url %}
+                            	active
+                            {% endif %} " href="{{ products_list_url }}">제품보러가기</a>
                         </li>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                               aria-expanded="false">Dropdown</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'accounts:logout' %}">로그아웃</a>
+                            </li>
+                            <li class="nav-item dropdown">
+
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    <img src="{{ request.user.profile_pic.url }}" alt="mdo" width="20" height="20"
+                                         class="rounded-circle"> 마이페이지</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="#">찜 목록</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalLogin"
+                                   id="login_modal" href="#">로그인</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalSingUp"
+                                   id="signup_modal" href="#">회원가입</a>
+                            </li>
+                        {% endif %}
                     </ul>
                     <form role="search">
                         <input class="form-control" type="search" placeholder="Search" aria-label="Search">
@@ -48,7 +62,9 @@
     </div>
 
     <!-- 로그인 modal -->
-    <form id="frm_login" action="" method="post">
+    <form id="frm_login" action="{% url 'accounts:login' %}" method="POST">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        {% csrf_token %}
         <div class="modal" tabindex="-1" role="dialog" id="modalLogin">
             <div class="modal-dialog" role="document">
                 <div class="modal-content rounded-4 shadow" style="color:black">
@@ -60,16 +76,16 @@
                     <div class="modal-body p-5 pt-0">
                         <form class="">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control rounded-3" id="login_id" name="member_login_id"
-                                       placeholder="ID">
-                                <label for="login_id">ID</label>
+                                <input type="text" class="form-control rounded-3" id="username" name="username"
+                                       placeholder="username">
+                                <label for="username">Username</label>
                             </div>
                             <div class="form-floating mb-3">
                                 <input type="password" class="form-control rounded-3" id="passwd" name="password"
                                        placeholder="Password">
                                 <label for="passwd">Password</label>
                             </div>
-                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="button">로그인</button>
+                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">로그인</button>
                         </form>
                     </div>
                 </div>
@@ -77,8 +93,9 @@
         </div>
     </form>
 
-    <form id="frm_join" action="" method="post" enctype="multipart/form-data">
-        <!-- 회원가입 modal -->
+    <!-- 회원가입 modal -->
+    <form id="frm_join" action="{% url 'accounts:signup' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="modal fade" tabindex="-1" role="dialog" id="modalSingUp">
             <div class="modal-dialog" role="document">
                 <div class="modal-content rounded-4 shadow" style="color:black">
@@ -90,37 +107,36 @@
                     <div class="modal-body p-5 pt-0">
                         <form class="">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control rounded-3 required" id="member_login_id"
-                                       name="member_login_id" placeholder="ID">
-                                <label for="member_login_id">ID</label>
+                                <input type="text" class="form-control rounded-3" id="username"
+                                       name="username" placeholder="Username">
+                                <label for="username">Username</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control rounded-3 required" id="password"
-                                       name="password" placeholder="confirm Password">
-                                <label for="password">Password</label>
+                                <input type="password" class="form-control rounded-3" id="password1"
+                                       name="password1" placeholder="Password">
+                                <label for="password1">Password</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control rounded-3 required" id="confirm_password"
-                                       name="confirm_password" placeholder="Confirm Password">
+                                <input type="password" class="form-control rounded-3" id="confirm_password"
+                                       name="password2" placeholder="Confirm Password">
                                 <label for="confirm_password">Confirm Password</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control rounded-3 required" id="member_name"
-                                       name="member_name" placeholder="Name">
-                                <label for="member_name">Name</label>
+                                <input type="text" class="form-control rounded-3" id="first_name"
+                                       name="first_name" placeholder="First_Name">
+                                <label for="first_name">First_Name</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control rounded-3 required" id="member_nickname"
-                                       name="member_nickname" placeholder="member_nickname">
-                                <label for="member_nickname">NickName</label>
+                                <input type="text" class="form-control rounded-3" id="last_name"
+                                       name="last_name" placeholder="Last_name">
+                                <label for="last_name">Last_name</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="file" class="form-control rounded-3" id="member_profile"
-                                       name="member_profile" placeholder="member_profile">
-                                <label for="member_profile">Member Profile</label>
+                                <input type="file" class="form-control rounded-3" id="profile_pic"
+                                       name="profile_pic" placeholder="Profile Pic">
+                                <label for="profile_pic">Profile Pic</label>
                             </div>
-                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="button"
-                                    onclick="fn_join()">회원가입
+                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">회원가입
                             </button>
                         </form>
                     </div>

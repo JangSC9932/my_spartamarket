@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container" style="width: 500px">
+        <main>
+            <div class="row g-5">
+                <div>
+                    <h4 class="mb-3">프로필 수정</h4>
+                    <form action="{% url 'accounts:profile_edit' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="mb-3">
+                                <img src="{{ request.user.profile_pic.url }}" alt="{{ request.user.profile_pic.name }}"
+                                     width="100%" height="400">
+                                <input class="form-control" type="file" id="formFile" name="profile_pic"/>
+                                <span style="color: red"> {{ form.profile_pic.errors }}</span>
+                            </div>
+
+                            <div class="col-sm-12 mb-10">
+                                <label for="username" class="form-label">Username</label>
+                                <br/>
+                                <span id="username">{{ request.user }}</span>
+                            </div>
+
+                            <div class="col-sm-12 d-flex justify-content-between">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name"
+                                       placeholder="First Name"
+                                       value="{{ request.user.first_name }}">
+                                <span style="color: red"> {{ form.first_name.errors }}</span>
+                            </div>
+
+                            <div class="col-sm-12 d-flex justify-content-between">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name"
+                                       placeholder="Last Name"
+                                       value="{{ request.user.last_name }}">
+                                <span style="color: red"> {{ form.last_name.errors }}</span>
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit">정보수정</button>
+                            <button class="btn btn-secondary" type="button"
+                                    onclick="location.href='{% url 'accounts:profile' %}'">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

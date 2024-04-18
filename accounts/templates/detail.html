@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="container" style="width: 500px">
+        <main>
+            <div class="row g-5">
+                <div>
+                    <h4 class="mb-3">프로필</h4>
+                        <div class="row g-3">
+
+                            <div class="mb-3">
+                                <img src="{{ request.user.profile_pic.url }}" alt="{{ request.user.profile_pic.name }}"
+                                width="100%" height="400">
+                            </div>
+
+                            <div class="col-sm-12 mb-10">
+                                <label for="username" class="form-label">Username</label>
+                                <br/>
+                                <span id="username">{{ request.user }}</span>
+                            </div>
+
+                            <div class="col-sm-6 d-flex justify-content-between">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <span id="first_name">{{ request.user.first_name }}</span>
+                            </div>
+
+                            <div class="col-sm-6 d-flex justify-content-between">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <span id="last_name">{{ request.user.last_name }}</span>
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" type="button"
+                                    onclick="location.href='{% url 'accounts:profile_edit' %}'">정보수정</button>
+                            <button class="btn btn-dark" type="button"
+                                    onclick="location.href='{% url 'accounts:change_password' %}'">비밀번호 변경</button>
+                            <button class="btn btn-danger" type="button"
+                                    onclick="location.href='{% url 'accounts:profile_delete' %}'">회원탈퇴</button>
+                        </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
